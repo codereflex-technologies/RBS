@@ -1,51 +1,33 @@
-using System.Collections.Generic;
-using System.Reflection;
-using Autofac;
+using CR.RoomBooking.Data.Contexts;
+using CR.RoomBooking.Data.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using CR.RoomBooking.Data;
-using CR.RoomBooking.Services;
 
 namespace CR.RoomBooking.Web
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
             services.AddDbContext<RoomBookingsContext>(op => op.UseInMemoryDatabase("RoomBookings"));
-            
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
             services.AddSwaggerGen();
         }
         
-        public void ConfigureContainer(ContainerBuilder builder)
-        {
-            var assembles = new List<Assembly>()
-            {
-                typeof(RoomBookingsContext).Assembly,
-                typeof(IPersonService).Assembly
-            };
-
-            foreach (var assembly in assembles)
-            {
-                builder.RegisterAssemblyTypes(assembly)
-                    .AsImplementedInterfaces();
-            }
-        }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

@@ -1,25 +1,25 @@
-﻿using System;
-using System.Threading.Tasks;
-using CR.RoomBooking.Data;
+﻿using CR.RoomBooking.Data.Contexts;
 using CR.RoomBooking.Services.Models;
-using System.Linq;
+using System;
+using System.Threading.Tasks;
 
 namespace CR.RoomBooking.Services
 {
     public interface IPersonService
     {
-        Task<PersonInfo> GetAsync(int personId);
+        Task<PersonModel> GetAsync(int personId);
     }
 
     public class PersonService : IPersonService
     {
         RoomBookingsContext BookingsContext;
+
         public PersonService(RoomBookingsContext bookingsContext)
         {
             BookingsContext = bookingsContext; 
         }
 
-        public async Task<PersonInfo> GetAsync(int personId)
+        public async Task<PersonModel> GetAsync(int personId)
         {
              var p =  await BookingsContext.People.FindAsync(personId);
             throw new NotImplementedException();

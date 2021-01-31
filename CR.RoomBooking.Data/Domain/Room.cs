@@ -1,13 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using CR.RoomBooking.Data.Domain.Base;
+using System;
+using System.Collections.Generic;
 
 namespace CR.RoomBooking.Data.Domain
 {
-    public class Room
+    public sealed class Room : BaseEntity
     {
-        public int Id { get; set; }
-        
-        public string Name { get; set; }
-        
-        public ICollection<RoomBooking> Bookings { get; set; }
+        public string Name { get; private set; }
+
+        public ICollection<Booking> Bookings { get; private set; }
+
+        private Room() { }
+
+        public Room(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new Exception("Cannot create the entity");
+            }
+
+            Name = name;
+        }
     }
 }

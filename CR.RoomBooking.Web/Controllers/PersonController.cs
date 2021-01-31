@@ -17,7 +17,7 @@ namespace CR.RoomBooking.Web.Controllers
         }
 
         [HttpGet("{personId}")]
-        public async Task<ActionResult<PersonInfo>> Get(int personId)
+        public async Task<ActionResult<PersonModel>> Get(int personId)
         {
             var person = await _personService.GetAsync(personId);
             return person;
