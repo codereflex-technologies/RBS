@@ -1,6 +1,8 @@
-﻿using CR.RoomBooking.Data.Domain.Base;
+﻿using CR.RoomBooking.Data.Contexts;
+using CR.RoomBooking.Data.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Threading.Tasks;
 
 namespace CR.RoomBooking.Data.Repositories
 {
@@ -9,7 +11,8 @@ namespace CR.RoomBooking.Data.Repositories
         void Add(T entity);
         void Update(T entity);
         void Remove(T entity);
-        long SaveChanges();
+        Task<long> SaveChangesAsync();
         DbSet<T> Table { get; }
+        RoomBookingsContext Context { get; }
     }
 }

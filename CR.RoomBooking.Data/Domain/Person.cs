@@ -24,9 +24,29 @@ namespace CR.RoomBooking.Data.Domain
         {
             if (string.IsNullOrWhiteSpace(firstName)
                 || string.IsNullOrWhiteSpace(lastName)
-                || string.IsNullOrWhiteSpace(PhoneNumber))
+                || string.IsNullOrWhiteSpace(phoneNumber))
             {
                 throw new Exception("Cannot create the entity");
+            }
+
+            FirstName = firstName;
+            LastName = lastName;
+            PhoneNumber = phoneNumber;
+            Email = email;
+            DateOfBirth = dateOfBirth;
+        }
+
+        public void UpdateFields(string firstName,
+                                 string lastName,
+                                 string phoneNumber,
+                                 string email,
+                                 DateTime dateOfBirth)
+        {
+            if (string.IsNullOrWhiteSpace(firstName)
+                || string.IsNullOrWhiteSpace(lastName)
+                || string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                throw new Exception("Cannot update the entity");
             }
 
             FirstName = firstName;

@@ -21,5 +21,15 @@ namespace CR.RoomBooking.Data.Domain
 
             Name = name;
         }
+
+        public void UpdateFields(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new Exception("Cannot update the entity");
+            }
+
+            Name = name;
+        }
     }
 }

@@ -1,5 +1,7 @@
 using CR.RoomBooking.Data.Contexts;
 using CR.RoomBooking.Data.Repositories;
+using CR.RoomBooking.Services.Implementations;
+using CR.RoomBooking.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,11 +25,14 @@ namespace CR.RoomBooking.Web
             services.AddControllers();
 
             services.AddDbContext<RoomBookingsContext>(op => op.UseInMemoryDatabase("RoomBookings"));
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IPersonService, PersonService>();
+            services.AddScoped<IRoomService, RoomService>();
 
             services.AddSwaggerGen();
         }
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
