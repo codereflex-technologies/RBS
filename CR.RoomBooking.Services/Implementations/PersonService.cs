@@ -142,7 +142,8 @@ namespace CR.RoomBooking.Services.Implementations
         {
             try
             {
-                Person person = await _repository.Table.AsNoTracking()
+                Person person = await _repository.Table.Include(e => e.Bookings)
+                                                       .AsNoTracking()
                                                        .FirstOrDefaultAsync(e => e.Id == id);
 
                 if (person == null)

@@ -1,5 +1,6 @@
 ﻿using CR.RoomBooking.Data.Domain;
 using CR.RoomBooking.Data.DomainConfigurations.Base;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CR.RoomBooking.Data.DomainConfigurations
@@ -15,11 +16,13 @@ namespace CR.RoomBooking.Data.DomainConfigurations
 
             builder.HasOne(e => e.Person)
                    .WithMany(e => e.Bookings)
-                   .HasForeignKey(e => e.PersonId);
+                   .HasForeignKey(e => e.PersonId)
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(e => e.Room)
                    .WithMany(e => e.Bookings)
-                   .HasForeignKey(e => e.RoomId);
+                   .HasForeignKey(e => e.RoomId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
