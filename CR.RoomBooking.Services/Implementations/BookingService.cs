@@ -19,6 +19,9 @@ namespace CR.RoomBooking.Services.Implementations
             _repository = repository;
         }
 
+        /// <summary>
+        /// Add a booking
+        /// </summary>
         public async Task<ServiceResult> BookAsync(BookingRequestModel model)
         {
             try
@@ -28,6 +31,7 @@ namespace CR.RoomBooking.Services.Implementations
                     return ServiceResult.Error(ErrorMessages.InvalidDates);
                 }
 
+                // Check the range of the given datetime
                 if ((model.EndDate - model.StartDate).TotalHours > 1)
                 {
                     return ServiceResult.Error(ErrorMessages.TimeRangeLimit);
@@ -45,6 +49,10 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
+
+        /// <summary>
+        /// Remove the booking
+        /// </summary>
         public async Task<ServiceResult> RemoveAsync(int id)
         {
             try

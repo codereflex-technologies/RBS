@@ -22,6 +22,9 @@ namespace CR.RoomBooking.Services.Implementations
             _repository = repository;
         }
 
+        /// <summary>
+        /// Add a person
+        /// </summary>
         public async Task<ServiceResult> AddAsync(PersonRequestModel model)
         {
             try
@@ -46,10 +49,14 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
+        /// <summary>
+        ///  Get all with the given filtering parameters
+        /// </summary>
         public async Task<ServiceResult> GetAllAsync(string firstName, string lastName, string email, string phoneNumber, DateTime? dateOfBirth)
         {
             try
             {
+                // Creating predicate for filtering entities
                 var predicate = PredicateBuilder.New<Person>(true);
 
                 if (!string.IsNullOrWhiteSpace(firstName))
@@ -99,6 +106,9 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
+        /// <summary>
+        /// Get by id
+        /// </summary>
         public async Task<ServiceResult> GetAsync(int id)
         {
             try
@@ -125,6 +135,9 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
+        /// <summary>
+        /// Remove the person
+        /// </summary>
         public async Task<ServiceResult> RemoveAsync(int id)
         {
             try
@@ -148,6 +161,9 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
+        /// <summary>
+        /// Update the person
+        /// </summary>
         public async Task<ServiceResult> UpdateAsync(int id, PersonRequestModel model)
         {
             try

@@ -24,6 +24,9 @@ namespace CR.RoomBooking.Services.Implementations
             _bookingRepository = bookingRepository;
         }
 
+        /// <summary>
+        /// Add a room
+        /// </summary>
         public async Task<ServiceResult> AddAsync(RoomRequestModel model)
         {
             try
@@ -45,10 +48,14 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
+        /// <summary>
+        ///  Get all with the given filtering parameters
+        /// </summary>
         public async Task<ServiceResult> GetAllAsync(string name)
         {
             try
             {
+                // Creating predicate for filtering entities
                 var predicate = PredicateBuilder.New<Room>(true);
 
                 if (!string.IsNullOrWhiteSpace(name))
@@ -74,14 +81,17 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
+        /// <summary>
+        ///  Get available rooms in the given datetime range
+        /// </summary>
         public async Task<ServiceResult> GetAvailableRoomsAsync(DateTime startDate, DateTime endDate)
         {
             List<RoomModel> result = await _roomRepository.Table.Include(e => e.Bookings)
                                                           .AsNoTracking()
-                                                          .Where(e => e.Bookings.All(b => (startDate > b.EndDate && startDate < b.StartDate
+                                                          .Where(e => e.Bookings.All(b => (startDate > b.EndDate && startDate < b.StartDate // Case 1: When the given range is between to bookings
                                                                                           && endDate > b.EndDate && endDate < b.StartDate)
-                                                                                          || endDate > b.EndDate
-                                                                                          || endDate < b.StartDate))
+                                                                                          || (endDate > b.EndDate && startDate > b.EndDate ) // Case 2: When the given range is next the bookings
+                                                                                          || (endDate < b.StartDate && startDate < b.StartDate))) // Case 3: When the given range is before the bookings
                                                           .Select(e => new RoomModel()
                                                           {
                                                               Id = e.Id,
@@ -92,6 +102,9 @@ namespace CR.RoomBooking.Services.Implementations
             return ServiceResult.Success(result);
         }
 
+        /// <summary>
+        /// Get by id
+        /// </summary>
         public async Task<ServiceResult> GetAsync(int id)
         {
             try
@@ -114,6 +127,9 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
+        /// <summary>
+        /// Remove the room
+        /// </summary>
         public async Task<ServiceResult> RemoveAsync(int id, RemoveRoomModel model)
         {
             try
@@ -127,6 +143,7 @@ namespace CR.RoomBooking.Services.Implementations
                     return ServiceResult.Error(ErrorMessages.NotFound);
                 }
 
+                // If we are looking for transferring the bookings to another room
                 if (model != null && model.MoveBookings)
                 {
                     foreach (var booking in room.Bookings.Select(b => new Booking(b.PersonId, model.NewRoomId, b.StartDate, b.EndDate)))
@@ -146,6 +163,9 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
+        /// <summary>
+        /// Update the room
+        /// </summary>
         public async Task<ServiceResult> UpdateAsync(int id, RoomRequestModel model)
         {
             try
