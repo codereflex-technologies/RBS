@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CR.RoomBooking.Services", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CR.RoomBooking.Web", "CR.RoomBooking.Web\CR.RoomBooking.Web.csproj", "{D931AC79-FFEA-49B6-BC1B-0DDA70BAE3B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CR.RoomBooking.Tests", "CR.RoomBooking.Tests\CR.RoomBooking.Tests.csproj", "{CBA7D879-3F87-4A87-B153-F83EE4D7856F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CR.RoomBooking.Tests", "CR.RoomBooking.Tests\CR.RoomBooking.Tests.csproj", "{CBA7D879-3F87-4A87-B153-F83EE4D7856F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CR.RoomBooking.Utilities", "CR.RoomBooking.Utilities\CR.RoomBooking.Utilities.csproj", "{442AB8AB-537A-47ED-A474-8F977E56181E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{CBA7D879-3F87-4A87-B153-F83EE4D7856F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBA7D879-3F87-4A87-B153-F83EE4D7856F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBA7D879-3F87-4A87-B153-F83EE4D7856F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{442AB8AB-537A-47ED-A474-8F977E56181E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{442AB8AB-537A-47ED-A474-8F977E56181E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{442AB8AB-537A-47ED-A474-8F977E56181E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{442AB8AB-537A-47ED-A474-8F977E56181E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,6 +3,7 @@ using CR.RoomBooking.Data.Repositories;
 using CR.RoomBooking.Services.Interfaces;
 using CR.RoomBooking.Services.Models;
 using CR.RoomBooking.Services.Results;
+using CR.RoomBooking.Utilities.Error;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,16 +22,19 @@ namespace CR.RoomBooking.Services.Implementations
             _repository = repository;
         }
 
-        public async Task<ServiceResult> AddAsync(PersonModel personModel)
+        public async Task<ServiceResult> AddAsync(PersonRequestModel model)
         {
             try
             {
-                if (personModel == null)
+                if (model == null 
+                    || string.IsNullOrWhiteSpace(model.FirstName)
+                    || string.IsNullOrWhiteSpace(model.LastName)
+                    || string.IsNullOrWhiteSpace(model.PhoneNumber))
                 {
-                    throw new ArgumentNullException();
+                    return ServiceResult.Error(ErrorMessages.InvalidModel);
                 }
 
-                Person person = new Person(personModel.FirstName, personModel.LastName, personModel.PhoneNumber, personModel.Email, personModel.DateOfBirth);
+                Person person = new Person(model.FirstName, model.LastName, model.PhoneNumber, model.Email, model.DateOfBirth);
                 _repository.Add(person);
                 await _repository.SaveChangesAsync();
 
@@ -130,7 +134,7 @@ namespace CR.RoomBooking.Services.Implementations
 
                 if (person == null)
                 {
-                    return ServiceResult.Success(0);
+                    return ServiceResult.Error(ErrorMessages.NotFound);
                 }
 
                 _repository.Remove(person);
@@ -144,7 +148,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
-        public async Task<ServiceResult> UpdateAsync(int id, PersonModel personModel)
+        public async Task<ServiceResult> UpdateAsync(int id, PersonRequestModel model)
         {
             try
             {
@@ -153,7 +157,7 @@ namespace CR.RoomBooking.Services.Implementations
 
                 if (person == null)
                 {
-                    return ServiceResult.Success(0);
+                    return ServiceResult.Error(ErrorMessages.NotFound);
                 }
 
                 var local = _repository.Context.Set<Person>().Local.FirstOrDefault(e => e.Id == id);
@@ -163,7 +167,7 @@ namespace CR.RoomBooking.Services.Implementations
                     _repository.Context.Entry(local).State = EntityState.Detached;
                 }
 
-                person.UpdateFields(personModel.FirstName, personModel.LastName, personModel.PhoneNumber, personModel.Email, person.DateOfBirth);
+                person.UpdateFields(model.FirstName, model.LastName, model.PhoneNumber, model.Email, person.DateOfBirth);
                 _repository.Update(person);
                 await _repository.SaveChangesAsync();
 

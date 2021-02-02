@@ -1,4 +1,5 @@
 ﻿using CR.RoomBooking.Data.Domain.Base;
+using CR.RoomBooking.Utilities.Error;
 using System;
 using System.Collections.Generic;
 
@@ -16,7 +17,7 @@ namespace CR.RoomBooking.Data.Domain
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new Exception("Cannot create the entity");
+                throw new Exception(ErrorMessages.InvalidModel);
             }
 
             Name = name;
@@ -26,7 +27,7 @@ namespace CR.RoomBooking.Data.Domain
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw new Exception("Cannot update the entity");
+                throw new Exception(ErrorMessages.InvalidModel);
             }
 
             Name = name;

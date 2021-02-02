@@ -39,7 +39,7 @@ namespace CR.RoomBooking.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ObjectResult> AddAsync([FromBody] PersonModel model)
+        public async Task<ObjectResult> AddAsync([FromBody] PersonRequestModel model)
         {
             var result = await _personService.AddAsync(model);
 
@@ -47,7 +47,7 @@ namespace CR.RoomBooking.Web.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ObjectResult> UpdateAsync([FromRoute] int id, [FromBody] PersonModel model)
+        public async Task<ObjectResult> UpdateAsync([FromRoute] int id, [FromBody] PersonRequestModel model)
         {
             var result = await _personService.UpdateAsync(id, model);
 

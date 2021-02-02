@@ -40,12 +40,12 @@ namespace CR.RoomBooking.Tests
         {
             await RunInContextAsync(async peopleController =>
             {
+                var personId = 1;
                 var person = GetTestPersonModel();
 
                 //Act  
                 await peopleController.AddAsync(person);
 
-                var personId = 1;
                 var result = await peopleController.GetAsync(personId);
 
                 //Assert  
@@ -73,10 +73,10 @@ namespace CR.RoomBooking.Tests
         {
             await RunInContextAsync(async peopleController =>
             {
+                var personId = 1;
                 var person = GetTestPersonModel();
                 await peopleController.AddAsync(person);
 
-                var personId = 1;
                 person.FirstName = "Updated First Name";
 
                 // Act
@@ -92,10 +92,9 @@ namespace CR.RoomBooking.Tests
         {
             await RunInContextAsync(async peopleController =>
             {
+                var personId = 1;
                 var person = GetTestPersonModel();
                 await peopleController.AddAsync(person);
-
-                var personId = 1;
 
                 // Act
                 var result = await peopleController.RemoveAsync(personId);
@@ -122,9 +121,9 @@ namespace CR.RoomBooking.Tests
             }
         }
 
-        private PersonModel GetTestPersonModel()
+        private PersonRequestModel GetTestPersonModel()
         {
-            var person = new PersonModel()
+            var person = new PersonRequestModel()
             {
                 FirstName = "Test First Name",
                 LastName = "Test Last Name",

@@ -29,6 +29,7 @@ namespace CR.RoomBooking.Web
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IPersonService, PersonService>();
             services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<IBookingService, BookingService>();
 
             services.AddSwaggerGen();
         }

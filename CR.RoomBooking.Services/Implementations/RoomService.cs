@@ -3,6 +3,7 @@ using CR.RoomBooking.Data.Repositories;
 using CR.RoomBooking.Services.Interfaces;
 using CR.RoomBooking.Services.Models;
 using CR.RoomBooking.Services.Results;
+using CR.RoomBooking.Utilities.Error;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,25 +15,27 @@ namespace CR.RoomBooking.Services.Implementations
 {
     public sealed class RoomService : IRoomService
     {
-        private readonly IRepository<Room> _repository;
+        private readonly IRepository<Room> _roomRepository;
+        private readonly IRepository<Booking> _bookingRepository;
 
-        public RoomService(IRepository<Room> repository)
+        public RoomService(IRepository<Room> roomRepository, IRepository<Booking> bookingRepository)
         {
-            _repository = repository;
+            _roomRepository = roomRepository;
+            _bookingRepository = bookingRepository;
         }
 
-        public async Task<ServiceResult> AddAsync(RoomModel roomModel)
+        public async Task<ServiceResult> AddAsync(RoomRequestModel model)
         {
             try
             {
-                if (roomModel == null)
+                if (model == null || string.IsNullOrWhiteSpace(model.Name))
                 {
-                    throw new ArgumentNullException();
+                    return ServiceResult.Error(ErrorMessages.InvalidModel);
                 }
 
-                Room room = new Room(roomModel.Name);
-                _repository.Add(room);
-                await _repository.SaveChangesAsync();
+                Room room = new Room(model.Name);
+                _roomRepository.Add(room);
+                await _roomRepository.SaveChangesAsync();
 
                 return ServiceResult.Success(room.Id);
             }
@@ -53,7 +56,7 @@ namespace CR.RoomBooking.Services.Implementations
                     predicate = predicate.And(e => e.Name.StartsWith(name));
                 }
 
-                var query = _repository.Table.Where(predicate);
+                var query = _roomRepository.Table.Where(predicate);
 
                 List<RoomModel> result = await query.AsNoTracking()
                                                     .Select(e => new RoomModel()
@@ -71,12 +74,30 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
+        public async Task<ServiceResult> GetAvailableRoomsAsync(DateTime startDate, DateTime endDate)
+        {
+            List<RoomModel> result = await _roomRepository.Table.Include(e => e.Bookings)
+                                                          .AsNoTracking()
+                                                          .Where(e => e.Bookings.All(b => (startDate > b.EndDate && startDate < b.StartDate
+                                                                                          && endDate > b.EndDate && endDate < b.StartDate)
+                                                                                          || endDate > b.EndDate
+                                                                                          || endDate < b.StartDate))
+                                                          .Select(e => new RoomModel()
+                                                          {
+                                                              Id = e.Id,
+                                                              Name = e.Name
+                                                          })
+                                                          .ToListAsync();
+
+            return ServiceResult.Success(result);
+        }
+
         public async Task<ServiceResult> GetAsync(int id)
         {
             try
             {
-                Room room = await _repository.Table.AsNoTracking()
-                                                   .FirstOrDefaultAsync(e => e.Id == id);
+                Room room = await _roomRepository.Table.AsNoTracking()
+                                                       .FirstOrDefaultAsync(e => e.Id == id);
 
                 var result = room == null ? null
                                           : new RoomModel()
@@ -93,20 +114,29 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
-        public async Task<ServiceResult> RemoveAsync(int id)
+        public async Task<ServiceResult> RemoveAsync(int id, RemoveRoomModel model)
         {
             try
             {
-                Room room = await _repository.Table.AsNoTracking()
-                                                   .FirstOrDefaultAsync(e => e.Id == id);
+                Room room = await _roomRepository.Table.Include(e => e.Bookings)
+                                                       .AsNoTracking()
+                                                       .FirstOrDefaultAsync(e => e.Id == id);
 
                 if (room == null)
                 {
-                    return ServiceResult.Success(0);
+                    return ServiceResult.Error(ErrorMessages.NotFound);
                 }
 
-                _repository.Remove(room);
-                await _repository.SaveChangesAsync();
+                if (model != null && model.MoveBookings)
+                {
+                    foreach (var booking in room.Bookings.Select(b => new Booking(b.PersonId, model.NewRoomId, b.StartDate, b.EndDate)))
+                    {
+                        _bookingRepository.Add(booking);
+                    }
+                }
+
+                _roomRepository.Remove(room);
+                await _roomRepository.SaveChangesAsync();
 
                 return ServiceResult.Success(room.Id);
             }
@@ -116,28 +146,28 @@ namespace CR.RoomBooking.Services.Implementations
             }
         }
 
-        public async Task<ServiceResult> UpdateAsync(int id, RoomModel roomModel)
+        public async Task<ServiceResult> UpdateAsync(int id, RoomRequestModel model)
         {
             try
             {
-                Room room = await _repository.Table.AsNoTracking()
-                                                   .FirstOrDefaultAsync(e => e.Id == id);
+                Room room = await _roomRepository.Table.AsNoTracking()
+                                                       .FirstOrDefaultAsync(e => e.Id == id);
 
                 if (room == null)
                 {
-                    return ServiceResult.Success(0);
+                    return ServiceResult.Error(ErrorMessages.NotFound);
                 }
 
-                var local = _repository.Context.Set<Room>().Local.FirstOrDefault(e => e.Id == id);
+                var local = _roomRepository.Context.Set<Room>().Local.FirstOrDefault(e => e.Id == id);
 
                 if (local != null)
                 {
-                    _repository.Context.Entry(local).State = EntityState.Detached;
+                    _roomRepository.Context.Entry(local).State = EntityState.Detached;
                 }
-                
-                room.UpdateFields(roomModel.Name);
-                _repository.Update(room);
-                await _repository.SaveChangesAsync();
+
+                room.UpdateFields(model.Name);
+                _roomRepository.Update(room);
+                await _roomRepository.SaveChangesAsync();
 
                 return ServiceResult.Success(room.Id);
             }
