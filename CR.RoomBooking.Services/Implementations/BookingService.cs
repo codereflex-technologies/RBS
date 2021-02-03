@@ -7,6 +7,7 @@ using CR.RoomBooking.Utilities.Error;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace CR.RoomBooking.Services.Implementations
 {
@@ -28,13 +29,13 @@ namespace CR.RoomBooking.Services.Implementations
             {
                 if (model.StartDate > model.EndDate)
                 {
-                    return ServiceResult.Error(ErrorMessages.InvalidDates);
+                    return ServiceResult.Error(ErrorMessages.InvalidDates,HttpStatusCode.BadRequest);
                 }
 
                 // Check the range of the given datetime
                 if ((model.EndDate - model.StartDate).TotalHours > 1)
                 {
-                    return ServiceResult.Error(ErrorMessages.TimeRangeLimit);
+                    return ServiceResult.Error(ErrorMessages.TimeRangeLimit,HttpStatusCode.BadRequest);
                 }
 
                 Booking booking = new Booking(model.PersonId, model.RoomId, model.StartDate, model.EndDate);
@@ -45,7 +46,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -62,7 +63,7 @@ namespace CR.RoomBooking.Services.Implementations
 
                 if (booking == null)
                 {
-                    return ServiceResult.Error(ErrorMessages.NotFound);
+                    return ServiceResult.Error(ErrorMessages.NotFound,HttpStatusCode.NotFound);
                 }
 
                 _repository.Remove(booking);
@@ -72,7 +73,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
     }

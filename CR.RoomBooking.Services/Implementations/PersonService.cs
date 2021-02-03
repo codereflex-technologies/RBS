@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace CR.RoomBooking.Services.Implementations
 {
@@ -34,7 +35,7 @@ namespace CR.RoomBooking.Services.Implementations
                     || string.IsNullOrWhiteSpace(model.LastName)
                     || string.IsNullOrWhiteSpace(model.PhoneNumber))
                 {
-                    return ServiceResult.Error(ErrorMessages.InvalidModel);
+                    return ServiceResult.Error(ErrorMessages.InvalidModel,HttpStatusCode.BadRequest);
                 }
 
                 Person person = new Person(model.FirstName, model.LastName, model.PhoneNumber, model.Email, model.DateOfBirth);
@@ -45,7 +46,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -102,7 +103,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -131,7 +132,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -148,7 +149,7 @@ namespace CR.RoomBooking.Services.Implementations
 
                 if (person == null)
                 {
-                    return ServiceResult.Error(ErrorMessages.NotFound);
+                    return ServiceResult.Error(ErrorMessages.NotFound,HttpStatusCode.NotFound);
                 }
 
                 _repository.Remove(person);
@@ -158,7 +159,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -174,7 +175,7 @@ namespace CR.RoomBooking.Services.Implementations
 
                 if (person == null)
                 {
-                    return ServiceResult.Error(ErrorMessages.NotFound);
+                    return ServiceResult.Error(ErrorMessages.NotFound,HttpStatusCode.NotFound);
                 }
 
                 var local = _repository.Context.Set<Person>().Local.FirstOrDefault(e => e.Id == id);
@@ -192,7 +193,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
     }

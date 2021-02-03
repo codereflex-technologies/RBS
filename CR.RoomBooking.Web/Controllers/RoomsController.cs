@@ -52,14 +52,7 @@ namespace CR.RoomBooking.Web.Controllers
             return BaseResult(result);
         }
 
-        [HttpPost("bookings")]
-        public async Task<ObjectResult> BookAsync([FromBody] BookingRequestModel model)
-        {
-            var result = await _bookingService.BookAsync(model);
-
-            return BaseResult(result);
-        }
-
+       
         [HttpPut("{id:int}")]
         public async Task<ObjectResult> UpdateAsync([FromRoute] int id, [FromBody] RoomRequestModel model)
         {
@@ -76,12 +69,6 @@ namespace CR.RoomBooking.Web.Controllers
             return BaseResult(result);
         }
 
-        [HttpDelete("bookings/{id:int}")]
-        public async Task<ObjectResult> RemoveBookingAsync([FromRoute] int id)
-        {
-            var result = await _bookingService.RemoveAsync(id);
-
-            return BaseResult(result);
-        }
+       
     }
 }

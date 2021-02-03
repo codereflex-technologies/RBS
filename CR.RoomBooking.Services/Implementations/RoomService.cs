@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CR.RoomBooking.Services.Implementations
@@ -33,7 +34,7 @@ namespace CR.RoomBooking.Services.Implementations
             {
                 if (model == null || string.IsNullOrWhiteSpace(model.Name))
                 {
-                    return ServiceResult.Error(ErrorMessages.InvalidModel);
+                    return ServiceResult.Error(ErrorMessages.InvalidModel,HttpStatusCode.BadRequest);
                 }
 
                 Room room = new Room(model.Name);
@@ -44,7 +45,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -77,7 +78,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -123,7 +124,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -140,7 +141,7 @@ namespace CR.RoomBooking.Services.Implementations
 
                 if (room == null)
                 {
-                    return ServiceResult.Error(ErrorMessages.NotFound);
+                    return ServiceResult.Error(ErrorMessages.NotFound,HttpStatusCode.NotFound);
                 }
 
                 // If we are looking for transferring the bookings to another room
@@ -159,7 +160,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
 
@@ -175,7 +176,7 @@ namespace CR.RoomBooking.Services.Implementations
 
                 if (room == null)
                 {
-                    return ServiceResult.Error(ErrorMessages.NotFound);
+                    return ServiceResult.Error(ErrorMessages.NotFound,HttpStatusCode.NotFound);
                 }
 
                 var local = _roomRepository.Context.Set<Room>().Local.FirstOrDefault(e => e.Id == id);
@@ -193,7 +194,7 @@ namespace CR.RoomBooking.Services.Implementations
             }
             catch (Exception e)
             {
-                return ServiceResult.Error(e.Message);
+                return ServiceResult.Error(e.Message, HttpStatusCode.InternalServerError);
             }
         }
     }
