@@ -12,12 +12,10 @@ namespace CR.RoomBooking.Web.Controllers
     public class RoomsController : BaseController
     {
         private readonly IRoomService _roomService;
-        private readonly IBookingService _bookingService;
 
-        public RoomsController(IRoomService roomService, IBookingService bookingService)
+        public RoomsController(IRoomService roomService)
         {
             _roomService = roomService;
-            _bookingService = bookingService;
         }
 
         [HttpGet]
@@ -69,6 +67,12 @@ namespace CR.RoomBooking.Web.Controllers
             return BaseResult(result);
         }
 
-       
+        [HttpDelete("range")]
+        public async Task<ObjectResult> RemoveRangeAsync([FromBody] RemoveRoomsModel model)
+        {
+            var result = await _roomService.RemoveRangeAsync(model);
+
+            return BaseResult(result);
+        }
     }
 }

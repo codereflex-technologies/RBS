@@ -36,5 +36,10 @@ namespace CR.RoomBooking.Services.Interfaces
         /// Remove the room
         /// </summary>
         Task<ServiceResult> RemoveAsync(int id, RemoveRoomModel model);
+
+        /// <summary>
+        /// Remove rooms
+        /// </summary>
+        Task<ServiceResult> RemoveRangeAsync(RemoveRoomsModel model);
     }
 }

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace CR.RoomBooking.Services.Implementations
 {
@@ -30,12 +30,12 @@ namespace CR.RoomBooking.Services.Implementations
         {
             try
             {
-                if (model == null 
+                if (model == null
                     || string.IsNullOrWhiteSpace(model.FirstName)
                     || string.IsNullOrWhiteSpace(model.LastName)
                     || string.IsNullOrWhiteSpace(model.PhoneNumber))
                 {
-                    return ServiceResult.Error(ErrorMessages.InvalidModel,HttpStatusCode.BadRequest);
+                    return ServiceResult.Error(ErrorMessages.InvalidModel, HttpStatusCode.BadRequest);
                 }
 
                 Person person = new Person(model.FirstName, model.LastName, model.PhoneNumber, model.Email, model.DateOfBirth);
@@ -117,16 +117,20 @@ namespace CR.RoomBooking.Services.Implementations
                 Person person = await _repository.Table.AsNoTracking()
                                                        .FirstOrDefaultAsync(e => e.Id == id);
 
-                var result = person == null ? null
-                                            : new PersonModel()
-                                            {
-                                                Id = person.Id,
-                                                FirstName = person.FirstName,
-                                                LastName = person.LastName,
-                                                Email = person.Email,
-                                                PhoneNumber = person.PhoneNumber,
-                                                DateOfBirth = person.DateOfBirth
-                                            };
+                if (person == null)
+                {
+                    return ServiceResult.Error(ErrorMessages.NotFound, HttpStatusCode.NotFound);
+                }
+
+                var result = new PersonModel()
+                             {
+                                 Id = person.Id,
+                                 FirstName = person.FirstName,
+                                 LastName = person.LastName,
+                                 Email = person.Email,
+                                 PhoneNumber = person.PhoneNumber,
+                                 DateOfBirth = person.DateOfBirth
+                             };
 
                 return ServiceResult.Success(result);
             }
@@ -149,7 +153,14 @@ namespace CR.RoomBooking.Services.Implementations
 
                 if (person == null)
                 {
-                    return ServiceResult.Error(ErrorMessages.NotFound,HttpStatusCode.NotFound);
+                    return ServiceResult.Error(ErrorMessages.NotFound, HttpStatusCode.NotFound);
+                }
+
+                var local = _repository.Context.Set<Person>().Local.FirstOrDefault(e => e.Id == id);
+
+                if (local != null)
+                {
+                    _repository.Context.Entry(local).State = EntityState.Detached;
                 }
 
                 _repository.Remove(person);
@@ -175,7 +186,7 @@ namespace CR.RoomBooking.Services.Implementations
 
                 if (person == null)
                 {
-                    return ServiceResult.Error(ErrorMessages.NotFound,HttpStatusCode.NotFound);
+                    return ServiceResult.Error(ErrorMessages.NotFound, HttpStatusCode.NotFound);
                 }
 
                 var local = _repository.Context.Set<Person>().Local.FirstOrDefault(e => e.Id == id);
